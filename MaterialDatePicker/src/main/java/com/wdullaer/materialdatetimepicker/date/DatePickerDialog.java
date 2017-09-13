@@ -195,6 +195,19 @@ public class DatePickerDialog extends DialogFragment implements
         return ret;
     }
 
+    /**
+     * @param callBack    How the parent is notified that the date is set.
+     * @param year        The initial year of the dialog.
+     * @param monthOfYear The initial month of the dialog.
+     * @param dayOfMonth  The initial day of the dialog.
+     * @param customLocale  The custom locale of the application
+     */
+    public static DatePickerDialog newInstance(OnDateSetListener callBack, int year, int monthOfYear, int dayOfMonth,String customLocale) {
+        DatePickerDialog ret = new DatePickerDialog();
+        ret.initialize(callBack, year, monthOfYear, dayOfMonth,customLocale);
+        return ret;
+    }
+
     @SuppressWarnings("unused")
     public static DatePickerDialog newInstance(OnDateSetListener callback) {
         Calendar now = Calendar.getInstance();
@@ -206,6 +219,20 @@ public class DatePickerDialog extends DialogFragment implements
         mCalendar.set(Calendar.YEAR, year);
         mCalendar.set(Calendar.MONTH, monthOfYear);
         mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+        mVersion = Build.VERSION.SDK_INT < Build.VERSION_CODES.M ? Version.VERSION_1 : Version.VERSION_2;
+    }
+
+    public void initialize(OnDateSetListener callBack, int year, int monthOfYear, int dayOfMonth, String customLocale) {
+        mCallBack = callBack;
+        mCalendar.set(Calendar.YEAR, year);
+        mCalendar.set(Calendar.MONTH, monthOfYear);
+        mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        Utils.CUSTOM_LOCALE = customLocale;
+
+        YEAR_FORMAT = new SimpleDateFormat("yyyy", Utils.getCustomLocale());
+        MONTH_FORMAT = new SimpleDateFormat("MMM", Utils.getCustomLocale());
+        DAY_FORMAT = new SimpleDateFormat("dd", Utils.getCustomLocale());
 
         mVersion = Build.VERSION.SDK_INT < Build.VERSION_CODES.M ? Version.VERSION_1 : Version.VERSION_2;
     }
@@ -224,9 +251,9 @@ public class DatePickerDialog extends DialogFragment implements
             mDefaultView = savedInstanceState.getInt(KEY_DEFAULT_VIEW);
         }
         if (Build.VERSION.SDK_INT < 18) {
-            VERSION_2_FORMAT = new SimpleDateFormat(activity.getResources().getString(R.string.mdtp_date_v2_daymonthyear), Locale.getDefault());
+            VERSION_2_FORMAT = new SimpleDateFormat(activity.getResources().getString(R.string.mdtp_date_v2_daymonthyear), new Locale(Utils.CUSTOM_LOCALE));
         } else {
-            VERSION_2_FORMAT = new SimpleDateFormat(DateFormat.getBestDateTimePattern(Locale.getDefault(), "EEEMMMdd"), Locale.getDefault());
+            VERSION_2_FORMAT = new SimpleDateFormat(DateFormat.getBestDateTimePattern(Locale.getDefault(), "EEEMMMdd"), new Locale(Utils.CUSTOM_LOCALE));
         }
         VERSION_2_FORMAT.setTimeZone(getTimeZone());
     }
@@ -265,6 +292,7 @@ public class DatePickerDialog extends DialogFragment implements
         outState.putSerializable(KEY_VERSION, mVersion);
         outState.putSerializable(KEY_TIMEZONE, mTimezone);
         outState.putParcelable(KEY_DATERANGELIMITER, mDateRangeLimiter);
+
     }
 
     @Override
@@ -329,6 +357,7 @@ public class DatePickerDialog extends DialogFragment implements
 
         final Activity activity = getActivity();
         mDayPickerView = new SimpleDayPickerView(activity, this);
+        mDayPickerView.setCustomLocale(Utils.CUSTOM_LOCALE);
         mYearPickerView = new YearPickerView(activity, this);
 
         // if theme mode has not been set by java code, check if it is specified in Style.xml
@@ -533,10 +562,10 @@ public class DatePickerDialog extends DialogFragment implements
         if (mVersion == Version.VERSION_1) {
             if (mDatePickerHeaderView != null) {
                 if (mTitle != null)
-                    mDatePickerHeaderView.setText(mTitle.toUpperCase(Locale.getDefault()));
+                    mDatePickerHeaderView.setText(mTitle.toUpperCase(Utils.getCustomLocale()));
                 else {
                     mDatePickerHeaderView.setText(mCalendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG,
-                            Locale.getDefault()).toUpperCase(Locale.getDefault()));
+                            Utils.getCustomLocale()).toUpperCase(Utils.getCustomLocale()));
                 }
             }
             mSelectedMonthTextView.setText(MONTH_FORMAT.format(mCalendar.getTime()));
@@ -546,7 +575,7 @@ public class DatePickerDialog extends DialogFragment implements
         if (mVersion == Version.VERSION_2) {
             mSelectedDayTextView.setText(VERSION_2_FORMAT.format(mCalendar.getTime()));
             if (mTitle != null)
-                mDatePickerHeaderView.setText(mTitle.toUpperCase(Locale.getDefault()));
+                mDatePickerHeaderView.setText(mTitle.toUpperCase(Utils.getCustomLocale()));
             else
                 mDatePickerHeaderView.setVisibility(View.GONE);
         }

@@ -31,6 +31,7 @@ import android.util.TypedValue;
 import android.view.View;
 
 import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Utility helper functions for time and date pickers.
@@ -46,6 +47,8 @@ public class Utils {
     public static final int SELECTED_ALPHA_THEME_DARK = 255;
     // Alpha level for fully opaque.
     public static final int FULL_ALPHA = 255;
+
+    public static String CUSTOM_LOCALE = "";
 
     public static boolean isJellybeanOrLater() {
       return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
@@ -159,5 +162,19 @@ public class Utils {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar;
+    }
+
+    /**
+     * get the locale of the application
+     * @return
+     */
+    public static Locale getCustomLocale(){
+        Locale customLocale = Locale.getDefault();
+        try{
+            customLocale = new Locale(Utils.CUSTOM_LOCALE);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return customLocale;
     }
 }

@@ -39,6 +39,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import com.wdullaer.materialdatetimepicker.R;
+import com.wdullaer.materialdatetimepicker.Utils;
 import com.wdullaer.materialdatetimepicker.date.MonthAdapter.CalendarDay;
 
 import java.security.InvalidParameterException;
@@ -389,7 +390,7 @@ public abstract class MonthView extends View {
 
     @NonNull
     private String getMonthAndYearString() {
-        Locale locale = Locale.getDefault();
+        Locale locale = Utils.getCustomLocale();
         String pattern = "MMMM yyyy";
 
         if (Build.VERSION.SDK_INT < 18) pattern = getContext().getResources().getString(R.string.mdtp_date_v1_monthyear);
@@ -552,7 +553,7 @@ public abstract class MonthView extends View {
      * @return The weekday label
      */
     private String getWeekDayLabel(Calendar day) {
-        Locale locale = Locale.getDefault();
+        Locale locale = Utils.getCustomLocale();
 
         // Localised short version of the string is not available on API < 18
         if (Build.VERSION.SDK_INT < 18) {

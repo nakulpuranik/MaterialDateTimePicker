@@ -55,7 +55,6 @@ public abstract class DayPickerView extends RecyclerView implements OnDateChange
     protected int mNumWeeks = 6;
     protected boolean mShowWeekNumber = false;
     protected int mDaysPerWeek = 7;
-    private static SimpleDateFormat YEAR_FORMAT = new SimpleDateFormat("yyyy", Locale.getDefault());
 
     protected Context mContext;
     protected Handler mHandler;
@@ -79,6 +78,8 @@ public abstract class DayPickerView extends RecyclerView implements OnDateChange
 
     private DatePickerController mController;
     private LinearLayoutManager linearLayoutManager;
+    private static Locale mCustomLocale = Locale.getDefault();
+    private static SimpleDateFormat YEAR_FORMAT = new SimpleDateFormat("yyyy", Locale.getDefault());
 
     public DayPickerView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -339,8 +340,9 @@ public abstract class DayPickerView extends RecyclerView implements OnDateChange
         cal.set(day.year, day.month, day.day);
 
         String sbuf = "";
-        sbuf += cal.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault());
+        sbuf += cal.getDisplayName(Calendar.MONTH, Calendar.LONG, mCustomLocale);
         sbuf += " ";
+        YEAR_FORMAT = new SimpleDateFormat("yyyy", mCustomLocale);
         sbuf += YEAR_FORMAT.format(cal.getTime());
         return sbuf;
     }
@@ -411,4 +413,7 @@ public abstract class DayPickerView extends RecyclerView implements OnDateChange
         return getChildAdapterPosition(getChildAt(0));
     }
 
+    public void setCustomLocale(String customLocale) {
+        this.mCustomLocale = new Locale(customLocale);
+    }
 }

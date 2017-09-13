@@ -62,7 +62,7 @@ public class DatePickerFragment extends Fragment implements DatePickerDialog.OnD
                         DatePickerFragment.this,
                         now.get(Calendar.YEAR),
                         now.get(Calendar.MONTH),
-                        now.get(Calendar.DAY_OF_MONTH)
+                        now.get(Calendar.DAY_OF_MONTH),"mr"
                 );
                 dpd.setThemeDark(modeDarkDate.isChecked());
                 dpd.vibrate(vibrateDate.isChecked());

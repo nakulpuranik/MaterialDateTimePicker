@@ -21,6 +21,10 @@ import android.graphics.Canvas;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 
+import com.wdullaer.materialdatetimepicker.Utils;
+
+import java.text.NumberFormat;
+
 public class SimpleMonthView extends MonthView {
 
     public SimpleMonthView(Context context, AttributeSet attr, DatePickerController controller) {
@@ -54,7 +58,9 @@ public class SimpleMonthView extends MonthView {
         } else {
             mMonthNumPaint.setColor(isHighlighted(year, month, day) ? mHighlightedDayTextColor : mDayTextColor);
         }
-
-        canvas.drawText(String.valueOf(day), x, y, mMonthNumPaint);
+        String dayValue = String.valueOf(day);
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(Utils.getCustomLocale());
+        dayValue = numberFormat.format(day);
+        canvas.drawText(dayValue, x, y, mMonthNumPaint);
     }
 }
